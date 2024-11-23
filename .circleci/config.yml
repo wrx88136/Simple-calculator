@@ -11,15 +11,18 @@ jobs:
       - run:
           name: Compile Application and Tests
           command: |
-            mkdir -p bin
-            javac -d bin src/*.java
+            mkdir -p bin/main bin/test
+            # Kompilacja kodu aplikacji
+            javac -d bin/main -cp lib/junit-platform-console-standalone-1.9.3.jar src/main/java/*.java
+            # Kompilacja testów
+            javac -d bin/test -cp "lib/junit-platform-console-standalone-1.9.3.jar:bin/main" src/test/java/*.java
 
-      # Uruchamianie testów jednostkowych z użyciem JUnit
+      # Uruchamianie testów jednostkowych
       - run:
           name: Run Unit Tests
           command: |
             java -jar lib/junit-platform-console-standalone-1.9.3.jar \
-              --class-path bin \
+              --class-path "bin/main:bin/test" \
               --scan-class-path
 
 workflows:
