@@ -3,18 +3,27 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11
+      - image: circleci/openjdk:11  # Obraz z OpenJDK 11
     steps:
-      - checkout
+      - checkout  # Pobranie kodu źródłowego z repozytorium
+
+      # Kompilacja kodu aplikacji i testów
       - run:
-          name: Install Maven
-          command: sudo apt-get install -y maven
+          name: Compile Application and Tests
+          command: |
+            mkdir -p bin
+            javac -d bin src/*.java
+
+      # Uruchamianie testów jednostkowych z użyciem JUnit
       - run:
-          name: Build and Test
-          command: mvn clean test
+          name: Run Unit Tests
+          command: |
+            java -jar lib/junit-platform-console-standalone-1.9.3.jar \
+              --class-path bin \
+              --scan-class-path
 
 workflows:
   version: 2
-  build:
+  build_and_test:
     jobs:
       - build
